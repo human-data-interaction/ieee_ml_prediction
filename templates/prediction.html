@@ -8,7 +8,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+    <script src="/static/uvis.js"></script>
 </head>
 
 <body>
@@ -54,7 +55,20 @@
     <a href="/">Back</a>
 
     </div>
-
+    <div class="container-fluid">
+        <div class="row">
+        <div class="col-md-12">
+            <hr/>
+            Macro Average
+            <div id="macro_avg"></div>
+        </div>
+        <div class="col-md-12">
+             <hr/>
+            Weighted Average
+            <div id="weighted_avg"></div>
+        </div>
+    </div>
+    </div>
       </main>
 
       <footer class="mastfoot mt-auto">
@@ -68,9 +82,27 @@
         let reportData = {{ report | safe }}
         let predictionData = {{ prediction | safe }}
 
-        console.log(predictionData)
+           let macro_avg = [
+            {name:'precision', value:reportData['macro avg'].precision, uncert: reportData['accuracy']* 10},
+            {name:'recall', value:reportData['macro avg'].recall, uncert: reportData['accuracy']* 10},
+            {name:'f1-score', value:reportData['macro avg']['f1-score'], uncert: reportData['accuracy']* 10}]
+
+           let weighted_avg = [
+            {name:'precision', value:reportData['weighted avg'].precision, uncert: reportData['accuracy']* 10},
+            {name:'recall', value:reportData['weighted avg'].recall, uncert: reportData['accuracy']* 10},
+            {name:'f1-score', value:reportData['weighted avg']['f1-score'], uncert: reportData['accuracy']* 10}]
 
         console.log(reportData)
+
+        let macroAvgChart = uvis.barChart().utype('gradient').width(600);
+            d3.select('#macro_avg')
+            .datum(macro_avg)
+            .call(macroAvgChart)
+        
+        let weightedAvgChart = uvis.barChart().utype('gradient').width(600);
+            d3.select('#weighted_avg')
+            .datum(weighted_avg)
+            .call(weightedAvgChart)
 
     </script>
 </body>

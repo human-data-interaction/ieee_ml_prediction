@@ -16,6 +16,7 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+	# df = pd.read_csv("spam.csv", encoding="latin-1")
 	df = pd.read_csv("data/ieee.csv", encoding="latin-1")
 	df = df[['Conference','Abstract']]
 	df.drop(df[df.isnull().any(axis=1)].index,inplace=True)
